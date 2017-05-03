@@ -1,5 +1,5 @@
 # 简单的hello
-``` goland
+``` Go
 package main
 
 import (
