@@ -106,3 +106,98 @@ clt:=http.Client{}
 clt.Post("xxxx","application/x-www-form-urlencoded",body)
 ```
 
+简单的，仅限于表单
+
+```go
+import(
+	"net/http"
+  	"net/url"
+)
+...
+data:=url.Values{"start":{"0"},"offset":{"xxxx"}}
+clt:=http.Client{}
+clt.PostForm("xxxx",data)
+```
+
+3.使用net/http包的NewRequest函数
+
+###### 其实不管是get方法也好，post方法也好，所有的get,post的http请求形式，最终都是会调用net/http包的NewRequest函数，多种多样的请求形式，也仅仅是封装的不同而已。
+
+```go
+import(
+	"net/http"
+  	"net/url"
+)
+...
+data:=url.Values{"start":{"0"},"offset":{"xxxx"}}
+body:= strings.NewReader(data.Encode())
+
+req,err:=http.NewRequest("POST","xxxxx",body)
+req.Header.Set("Content-Type","application/x-www-form-urlencoded")
+
+clt:=http.Client{}
+clt.Do(req)
+```
+
+###  3.添加request header
+
+net/http包没有封装  直接使用请求带header的get或者post的方法，所以，要想请求中带header，只能使用NewRequest方法。
+
+```go
+import(
+	"net/http"
+)
+...
+req,err:=http.NewRequest("POST","xxxxx",body)
+//此处还可以写req.Header.Set("User-Agent","myClient")
+req.Header.Add("User-Agent","myClient")
+
+clt:=http.Client{}
+clt.Do(req)
+```
+
+##### 需要值得注意的一点是:再"添加"header操作的时候，req.Header.Add和req.Header.Set都可以,但是在修改操作的时候，只能使用req.Header.Set。这俩个方法是有区别的，Golang底层Header的实现是一个map[string][]string,req.Header.Set方法，如果原来Header中没有值，那么是没问题的，如果有值，会将原来的值替换掉。而req.Header.Add的话，是在原来值的基础上，再append一个值，比如，原来header的值是"s",我req.Header.Add的话，变成了[s a]。但是，获取header值的方法req.Header.Get却只取第一个，所以，如果原来有值，重新req.Header.Add一个新值的话，req.Header.Get得到的值不变。
+
+### 4.打印response响应
+
+```go
+import (
+	"net/http"
+	"net/url"
+	"io/ioutil"
+)
+...
+content, err := ioutil.ReadAll(resp.Body)
+respBody := string(content)
+```
+
+### 5.使用cookie
+
+在Golang中使用http proxy，也必须构造自己的`http.client`，需要将`http.client`结构体的一个属性`Transport`自己实例化好。
+
+###### 当使用环境变量$http_proxy或$HTTP_PROXY作为代理时(即全局代理)
+
+```go
+//从环境变量$http_proxy或$HTTP_PROXY中获取HTTP代理地址
+func GetTransportFromEnvironment() (transport *http.Transport) {
+	transport = &http.Transport{Proxy : http.ProxyFromEnvironment}
+	return
+}
+```
+
+###### 当使用自己搭建http代理时
+
+参数`proxy_addr`即代理服务器IP端口号，例如：”[http://xxx.xxx.xxx.xxx:6000“，注意，必须加上"http](http://xxx.xxx.xxx.xxx:6000%E2%80%9C%EF%BC%8C%E6%B3%A8%E6%84%8F%EF%BC%8C%E5%BF%85%E9%A1%BB%E5%8A%A0%E4%B8%8A"http/)“
+
+```go
+func GetTransportFieldURL(proxy_addr *string) (transport *http.Transport) {
+	url_i := url.URL{}
+	url_proxy, error := url_i.Parse(*proxy_addr)
+	if error != nil{
+		fmt.Println(error.Error())
+	}
+	transport = &http.Transport{Proxy : http.ProxyURL(url_proxy)}
+	return
+}
+```
+
