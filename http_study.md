@@ -201,3 +201,12 @@ func GetTransportFieldURL(proxy_addr *string) (transport *http.Transport) {
 }
 ```
 
+使用的时候，首先调用函数，拿到对应的`transport`，即使用`GetTransportFieldURL`或者`GetTransportFieldURL`函数，然后构建自定义的`http.client` :
+
+```go
+ProxyUrl := "http://xxx.xxx.xxx.xxx:6000"
+transport := GetTransportFieldURL(&ProxyUrl)
+clt := http.Client{Transport:transport}
+clt.Get("http://www.baidu.com")
+```
+
