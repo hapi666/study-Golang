@@ -89,11 +89,13 @@ HTTP的请求报文分为三个部分：请求行，请求头，请求体
 
 请求和响应常见的Header:
 
-Content-Type       请求体/响应体  的类型，如：text/plain、application/json
+Content-Type       		请求体/响应体  的类型，如：text/plain、application/json
 
-Accept                   说明接受的类型，可以多个值用,(英文逗号)分隔开
+Accept                   		说明接受的类型，可以多个值用,(英文逗号)分隔开
 
-Content-length     请求体/响应体  的长度，单位字节
+Content-length     	请求体/响应体  的长度，单位字节
 
-Accept-Encoding   请求体/响应体  的长度，单位字节
+Contect-Encoding   	请求体/响应体  的编码格式，如gzip、deflate
+
+Accept-Ecoding 		告知对方我方接受的编码格式Contect-Ecoding
 
