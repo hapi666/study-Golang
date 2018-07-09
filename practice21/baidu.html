@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>百度一下,你就知道</title>
+        <style>
+            
+            #tupian {
+                width: 641px;
+                margin: 0 auto;
+                text-align: center; 
+                padding-top: 42px;
+            }
+            #search {
+                width: 641px;
+                margin: 0 auto;
+                text-align: center;
+                padding-top: 42px;
+            }
+            #search .shuru {
+                width: 400px;
+                height: 40px;
+            }
+            #search .shousuo {
+                width: 80px;
+                height: 40px;
+            }
+        </style>
+    </head>
+    <body>
+            <div id="tupian">
+                <img src="https://www.baidu.com/img/bd_logo1.png">
+            </div>
+            <div id="search">
+                <input class="shuru" type="text" id="txt"/>
+                <input class="shousuo" type="submit" value="百度一下" id="btn"/>
+            </div>      
+    </body>
+    <script src="jquery.js"></script><!--引入jQuery脚本-->
+    <script type="text/javascript">
+            $("#btn").click(function () {
+                if ($('#txt').val() != '') {
+                    var s = $("#txt").val();
+                    window.location.href = "http://www.baidu.com/s?wd=" + s;
+                };
+            })
+    </script>
+</html>
