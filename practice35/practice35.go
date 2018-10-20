@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
-
 	"github.com/nsf/termbox-go"
 )
 
@@ -79,7 +77,7 @@ func enterSongHotComment() {
 	//termbox.KeyInsert
 }
 
-func flush(minY, maxY int, f func()) {
+func flush(minY, maxY int, f func(),flag int) {
 	//moveX = 28
 	moveY = 8
 	f()
@@ -93,25 +91,33 @@ loop:
 			case termbox.KeyArrowDown:
 				moveY += 3
 			case termbox.KeyEnter:
-				//....
-				var b bool
 				switch moveY {
 				case 8:
-					switch b {
-					case reflect.DeepEqual(f, initDraw):
-						flush(8, 17, enterSongList)
-					case reflect.DeepEqual(f, enterSongList):
-						//call a SetCell function.
+					if flag == 1 {
+						flush(8, 17, enterSongList, 1)
 					}
-
+					if flag == 2 { //在第二个页面点击第一个的enter键
+						//results := crawl.TopList("云音乐新歌榜")
+						//setListCell(results)
+					}
+					if flag == 3 { //在第三个页面点击第一个的enter键
+						//Call HotComment function.
+					}
 				case 11:
-					//flush(8,,)
-					switch b {
-					case reflect.DeepEqual(f, initDraw):
-						flush(8, 11, enterSongHotComment)
-					case reflect.DeepEqual(f, enterSongHotComment):
-						//call a SetCell function.
+					if flag == 1 { //在第一个页面点击第二个的enter键
+						//flush(8, 11, enterSongHotComment, 1)
 					}
+					if flag == 2 { //在第二个页面点击第二个的enter键
+						//call a SetCell function.
+						//results := crawl.TopList("云音乐热歌榜")
+						//setListCell(results)
+					}
+				case 14:
+					if flag == 2 {
+						//results := crawl.TopList("网易原创歌曲榜")
+						//setListCell(results)
+					}
+					//...
 				}
 				break loop
 			case termbox.KeyEsc:
@@ -139,5 +145,6 @@ func main() {
 			eventQueue <- termbox.PollEvent()
 		}
 	}()
-	flush(8, 11, initDraw)
+	flag:=1
+	flush(8, 11, initDraw,flag)
 }
