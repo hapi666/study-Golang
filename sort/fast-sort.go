@@ -14,6 +14,13 @@ import "fmt"
 //FastSort is a fast way to sort slice.
 func FastSort(a []int) []int {
 	if len(a) <= 1 {
+		/*
+			关于为什么要在这里返回一个拷贝值,
+			首先，这个返回值是作为上层递归的结果值的，
+			也就是说，在这个if的地方假如我返回的是a，
+			那么我之后在上层递归里面如果有修改这个返回值的操作，
+			那么，我这个sort就出现bug了（Panic）
+		*/
 		temp := make([]int, len(a))
 		copy(temp, a)
 		return temp
@@ -29,11 +36,31 @@ func FastSort(a []int) []int {
 		}
 	}
 	low, high = FastSort(low), FastSort(high)
+	//low[0] = 1
 	return append(append(low, pivot), high...)
+}
+
+func test(t []int) []int {
+	// temp := make([]int, len(t))
+	// copy(temp, t)
+	// temp[0] = 1
+	t[0] = 1
+	return t
 }
 
 func main() {
 	//testing data.
 	var b = []int{27, 38, 12, 39, 27, 16}
-	fmt.Println(FastSort(b))
+	//fmt.Println(FastSort(b))
+	fmt.Println(b)
+	newb := FastSort(b)
+	fmt.Println(b)
+	fmt.Println(newb)
+	// fmt.Println(b)
+	// newb := test(b)
+	// fmt.Println(b)
+	// fmt.Println(newb)
+	// newb[1] = 2
+	// fmt.Println(newb)
+	// fmt.Println(b)
 }
