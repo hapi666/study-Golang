@@ -30,8 +30,16 @@ type Port struct {
 *我不太理解：为什么实现了这个Unmarshaller接口里面的UnmarshalJSON()方法
 *就是实现了能够自己预想的 反序列化/序列化 呢
 *第二天。。。
-*我翻阅源码（之前粗略翻阅并没有发现），忽然看到了在json包里面，在反序列化之前是要判断这个v的值类型的
- */
+*我翻阅源码（之前粗略翻阅并没有发现），忽然看到了在json包里面，
+
+// To unmarshal JSON into a value implementing the Unmarshaler interface,
+// Unmarshal calls that value's UnmarshalJSON method, including
+// when the input is a JSON null.
+
+*在反序列化之前是要判断这个待反序列化的json的值类型的（在d.value()这个方法里判断值类型）
+*紧接着，判断好了就call对应的函数比方说如果是数组就call d.array() 这个函数
+*在这个array函数里面就调用了UnmarshalJSON这个函数
+*/
 
 // 实现 json.Unmarshaller 接口
 func (port *Port) UnmarshalJSON(value []byte) error {
