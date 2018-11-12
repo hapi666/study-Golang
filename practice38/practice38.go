@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"reflect"
 )
 
 type Host struct {
@@ -25,6 +26,14 @@ type Port struct {
 	StrVal string
 }
 
+type Test interface {
+	umter(int, string) int
+}
+
+func (Host) umter(a int, b string) int {
+	return a
+}
+
 /*
 *之前我一直特别疑惑，因为这是我从别人博客里看到的嘛，
 *我不太理解：为什么实现了这个Unmarshaller接口里面的UnmarshalJSON()方法
@@ -39,6 +48,15 @@ type Port struct {
 *在反序列化之前是要判断这个待反序列化的json的值类型的（在d.value()这个方法里判断值类型）
 *紧接着，判断好了就call对应的函数比方说如果是数组就call d.array() 这个函数
 *在这个array函数里面就调用了UnmarshalJSON这个函数
+
+*我又tm产生了一个疑惑。。那源码包里也没有实现了Unmarshaller的数据结构啊，
+*那 那个u.UnmarshalJSON(d.data[start:d.off])调用的是啥呢？？
+*。。。
+*我终于看懂了，源码的流程是这样的：首先我们自己不是call Unmarshal()函数嘛，
+*源码会call unmarshal(v)将v的动态值取出来，通过reflect判断它的动态值是不是指针或者是不是nil
+*如果它的动态值不是指针，或者如果它是Nil，那么直接报错（InvalidUnmarshalError）意思是说这个参数是无效的
+*因为啊，传递给Unmarshal()的参数必须是非空指针！
+*接着，
 */
 
 // 实现 json.Unmarshaller 接口
@@ -74,4 +92,47 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(test)
+	host := &Host{
+		Name: "yulibaozi",
+		Port: Port{
+			Type:   Int,
+			IntVal: 8080,
+		},
+	}
+	var t Test
+	t = host
+	f, ok := t.(*Host)
+	if ok {
+		fmt.Println(f)
+	}
+	fmt.Println(f.umter(1, "1"))
+	var t1 *Host
+	var interf Test
+	interf = t1
+	if interf == nil {
+		fmt.Println("yes!")
+	}
+	//rr := &Host{}
+	// var i Test = rr
+	v := reflect.ValueOf(interf)
+	vv := v.Elem()
+	// vv := reflect.ValueOf(v)
+	vvv := reflect.ValueOf(vv)
+	/*
+	   Elem()是对reflect.Value类型的变量不断解引用
+	*/
+	fmt.Println(v.Kind())
+	fmt.Println(vv.Kind())
+	fmt.Println(vv.IsValid())
+	fmt.Println(vvv.Kind())
+	fmt.Println(vvv.IsValid())
+	a := 2
+	x := reflect.ValueOf(&a).Elem()
+
+	fmt.Println(x.Addr())
+	// fmt.Println(vv.Elem().Kind())
+	// ee := reflect.ValueOf(rr)
+	// if ee.Kind() == reflect.Ptr {
+	// 	fmt.Println(ee)
+	// }
 }
