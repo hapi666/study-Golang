@@ -53,7 +53,7 @@ func (Host) umter(a int, b string) int {
 *那 那个u.UnmarshalJSON(d.data[start:d.off])调用的是啥呢？？
 *。。。
 *我终于看懂了，源码的流程是这样的：首先我们自己不是call Unmarshal()函数嘛，
-*源码会call unmarshal(v)将v的动态值取出来，通过reflect判断它的动态值是不是指针或者是不是nil
+*源码会call d.unmarshal(v)将v的动态值取出来，通过reflect判断它的动态值是不是指针或者是不是nil
 *如果它的动态值不是指针，或者如果它是Nil，那么直接报错（InvalidUnmarshalError）意思是说这个参数是无效的
 *因为啊，传递给Unmarshal()的参数必须是非空指针！
 *接着，
@@ -135,4 +135,6 @@ func main() {
 	// if ee.Kind() == reflect.Ptr {
 	// 	fmt.Println(ee)
 	// }
+	var as = []string{"hi ", "hapi!"}
+	fmt.Println(as)
 }
