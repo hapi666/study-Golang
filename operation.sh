@@ -7,7 +7,6 @@ pwd
 files=$(ls resume)
 for filename in ${files}
 do
-    ls
     cp -r ./resume/${filename} ./${filename}
     cd ${filename}
     pwd
