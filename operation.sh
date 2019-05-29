@@ -4,6 +4,9 @@ git pull
 pwd
 cd ..
 pwd
+cd resume
+ls
+cd ..
 files=$(ls resume)
 for filename in ${files}
 do
