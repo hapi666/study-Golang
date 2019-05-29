@@ -5,7 +5,6 @@ pwd
 cd ..
 pwd
 files=$(ls resume)
-echo ${files}
 for filename in ${files}
 do
     ls
