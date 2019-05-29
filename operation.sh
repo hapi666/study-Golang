@@ -4,14 +4,12 @@ git pull
 pwd
 cd ..
 pwd
-cd resume
-ls
-cd ..
 files=$(ls resume)
 for filename in ${files}
 do
     cp -r resume/${filename} ${filename}
     echo "now"
+    echo ${filename}
     cd ${filename}
     pwd
     git add .
